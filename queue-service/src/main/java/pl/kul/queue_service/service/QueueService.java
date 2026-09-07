@@ -1,8 +1,10 @@
 package pl.kul.queue_service.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Range;
 import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
@@ -49,5 +51,13 @@ public class QueueService {
         return redisTemplate.opsForValue()
                 .setIfAbsent(key, "1", Duration.ofSeconds(3))
                 .map(wasSet -> !wasSet);
+    }
+
+    public Flux<String> releaseNext(String eventId, int count) {
+        String key = queueKey(eventId);
+        return redisTemplate.opsForZSet()
+                .range(key, Range.closed(0L, (long) count - 1))
+                .flatMap(userId -> redisTemplate.opsForZSet().remove(key, userId)
+                        .thenReturn(userId));
     }
 }
