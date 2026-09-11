@@ -12,6 +12,7 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping("/events/{eventId}/queue")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class QueueController {
     private final QueueService queueService;
     private final static Long CHECKED_POSITION_NOT_IN_QUEUE = -1L;

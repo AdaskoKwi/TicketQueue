@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Range;
 import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.stereotype.Service;
+import pl.kul.queue_service.model.QueuePosition;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -59,5 +60,20 @@ public class QueueService {
                 .range(key, Range.closed(0L, (long) count - 1))
                 .flatMap(userId -> redisTemplate.opsForZSet().remove(key, userId)
                         .thenReturn(userId));
+    }
+
+    public Flux<QueuePosition> streamPositions(String eventId) {
+        String key = queueKey(eventId);
+
+        return getQueueSize(eventId)
+                .flatMapMany(size -> redisTemplate.opsForZSet()
+                        .range(key, Range.unbounded())
+                        .index()
+                        .map(tuple -> new QueuePosition(
+                                tuple.getT2(),
+                                tuple.getT1() + 1,
+                                size)
+                        )
+                );
     }
 }
