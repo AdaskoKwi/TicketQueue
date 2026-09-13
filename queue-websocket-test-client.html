@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>Queue WebSocket Test Client</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<style>
+  body { font-family: monospace; max-width: 700px; margin: 40px auto; padding: 0 16px; }
+  input, button { font-family: monospace; font-size: 14px; padding: 6px; margin: 4px 0; }
+  input { width: 220px; }
+  #log { border: 1px solid #ccc; padding: 10px; height: 400px; overflow-y: auto; background: #fafafa; margin-top: 16px; }
+  .line { margin: 2px 0; }
+  .ok { color: green; }
+  .err { color: red; }
+  .msg { color: #0645AD; }
+</style>
+</head>
+<body>
+
+<h2>Queue WebSocket test client</h2>
+
+<div>
+  Base URL: <input id="baseUrl" value="http://localhost:8080">
+</div>
+<div>
+  Event ID: <input id="eventId" value="concert-2026">
+</div>
+<div>
+  User ID: <input id="userId" value="user-1">
+</div>
+<div>
+  <button onclick="connect()">Connect + subscribe</button>
+  <button onclick="joinQueue()">Join queue (REST)</button>
+  <button onclick="disconnect()">Disconnect</button>
+</div>
+
+<div id="log"></div>
+
+<script>
+let stompClient = null;
+
+function log(text, cls) {
+  const el = document.getElementById('log');
+  const line = document.createElement('div');
+  line.className = 'line ' + (cls || '');
+  line.textContent = new Date().toLocaleTimeString() + '  ' + text;
+  el.appendChild(line);
+  el.scrollTop = el.scrollHeight;
+}
+
+function connect() {
+  const baseUrl = document.getElementById('baseUrl').value;
+  const eventId = document.getElementById('eventId').value;
+  const userId = document.getElementById('userId').value;
+
+  const socket = new SockJS(baseUrl + '/queue/ws');
+  stompClient = Stomp.over(socket);
+  stompClient.debug = null; // wycisz gadatliwe logi STOMP w konsoli
+
+  stompClient.connect({}, () => {
+    log('Connected to ' + baseUrl + '/queue/ws', 'ok');
+
+    const topic = '/topic/queue/' + eventId + '/' + userId;
+    stompClient.subscribe(topic, (frame) => {
+      log('MSG on ' + topic + ' -> ' + frame.body, 'msg');
+    });
+    log('Subscribed to ' + topic, 'ok');
+  }, (error) => {
+    log('Connection error: ' + error, 'err');
+  });
+}
+
+function disconnect() {
+  if (stompClient) {
+    stompClient.disconnect(() => log('Disconnected', 'ok'));
+  }
+}
+
+async function joinQueue() {
+  const baseUrl = document.getElementById('baseUrl').value;
+  const eventId = document.getElementById('eventId').value;
+  const userId = document.getElementById('userId').value;
+
+  try {
+    const res = await fetch(`${baseUrl}/events/${eventId}/queue/join`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId })
+    });
+    const body = await res.text();
+    log(`JOIN -> HTTP ${res.status}: ${body}`, res.ok ? 'ok' : 'err');
+  } catch (e) {
+    log('JOIN error: ' + e, 'err');
+  }
+}
+</script>
+
+</body>
+</html>
