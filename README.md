@@ -128,6 +128,23 @@ Three layers, each testing a different thing:
 
 Documenting these because they were deliberate engineering calls, not oversights.
 
+### Blocking stack for `purchase-service` (deliberate, not default)
+
+Unlike `queue-service`, this service uses a classic blocking stack (Spring Data JPA,
+standard `@RestController`, blocking `@KafkaListener`) rather than reactive.
+
+This is a deliberate choice based on actual traffic shape, not a default: `queue-service`
+must absorb a sudden burst of thousands of concurrent joins (the "flash sale" moment),
+which is exactly where non-blocking I/O pays off. `purchase-service`, by contrast, only
+receives the trickle of users already released from the queue — even with ~20 concurrent
+events releasing 5 users each every few seconds, that's on the order of 100 requests
+over several seconds, not a burst. At that traffic shape, a blocking stack has no
+meaningful throughput disadvantage, and it keeps the service simpler (standard JPA,
+standard `@KafkaListener`, no R2DBC) without sacrificing anything in practice.
+
+This is intentionally asymmetric: not every service in the system needs the same
+execution model — the model should match each service's actual load profile.
+
 ### Servlet stack (Tomcat) over full WebFlux
 
 This service uses Reactive Redis (`ReactiveRedisTemplate`, `Mono`/`Flux`) throughout,
