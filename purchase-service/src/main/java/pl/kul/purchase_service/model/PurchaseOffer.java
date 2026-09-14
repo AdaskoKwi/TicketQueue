@@ -1,12 +1,13 @@
 package pl.kul.purchase_service.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 import pl.kul.purchase_service.model.kafka.SlotOfferedEvent;
 
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -18,6 +19,7 @@ public class PurchaseOffer {
     private UUID kafkaEventUUID;
     private String eventId;
     private String userId;
+    @Enumerated(EnumType.STRING)
     private PurchaseStatus status;
     private Instant expiresAt;
 

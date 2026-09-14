@@ -9,4 +9,5 @@ import java.util.UUID;
 
 public interface PurchaseOfferRepository extends JpaRepository<PurchaseOffer, UUID> {
     Optional<PurchaseOffer> findByEventIdAndUserIdAndStatus(String eventId, String userId, PurchaseStatus status);
+    Boolean existsByEventIdAndUserIdAndStatus(String eventId, String userId, PurchaseStatus status);
 }

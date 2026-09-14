@@ -1,8 +1,8 @@
 package pl.kul.purchase_service.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.kul.purchase_service.model.PurchaseOffer;
 import pl.kul.purchase_service.model.PurchaseStatus;
 import pl.kul.purchase_service.model.exception.PurchaseOfferExpiredException;
@@ -23,10 +23,15 @@ public class PurchaseOfferService {
         if (repository.existsById(event.kafkaEventUUID())) {
             return Optional.empty();
         }
+
+        if (repository.existsByEventIdAndUserIdAndStatus(event.eventId(), event. userId(), PurchaseStatus.OFFERED)) {
+            return Optional.empty();
+        }
+
         return Optional.of(repository.save(new PurchaseOffer(event)));
     }
 
-    @Transactional
+    @Transactional(noRollbackFor = PurchaseOfferExpiredException.class)
     public PurchaseOffer completePurchase(String eventId, String userId) {
         PurchaseOffer offer = repository
                 .findByEventIdAndUserIdAndStatus(eventId, userId, PurchaseStatus.OFFERED)
