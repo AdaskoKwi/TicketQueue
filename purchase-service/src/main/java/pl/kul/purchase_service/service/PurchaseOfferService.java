@@ -11,6 +11,7 @@ import pl.kul.purchase_service.model.kafka.SlotOfferedEvent;
 import pl.kul.purchase_service.repository.PurchaseOfferRepository;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -45,5 +46,13 @@ public class PurchaseOfferService {
 
         offer.setStatus(PurchaseStatus.COMPLETED);
         return repository.save(offer);
+    }
+
+    public List<PurchaseOffer> getAllOfferedPurchaseOffers() {
+        return repository.findAllByStatus(PurchaseStatus.OFFERED);
+    }
+
+    public void saveAll(List<PurchaseOffer> offers) {
+        repository.saveAll(offers);
     }
 }
