@@ -10,14 +10,14 @@ import pl.kul.purchase_service.model.exception.PurchaseOfferNotFoundException;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(PurchaseOfferNotFoundException.class)
-    public ResponseEntity<?> handleOfferNotFoundException(PurchaseOfferNotFoundException ex) {
+    public ResponseEntity<?> handlePurchaseOfferNotFoundException(PurchaseOfferNotFoundException ex) {
         return ResponseEntity
                 .status(404)
                 .body(ex.getMessage());
     }
 
     @ExceptionHandler(PurchaseOfferExpiredException.class)
-    public ResponseEntity<?> handleOfferExpiredException(PurchaseOfferExpiredException ex) {
+    public ResponseEntity<?> handlePurchaseOfferExpiredException(PurchaseOfferExpiredException ex) {
         return ResponseEntity
                 .status(410)
                 .body(ex.getMessage());

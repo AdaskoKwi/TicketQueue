@@ -1,6 +1,7 @@
 package pl.kul.purchase_service.data;
 
 import pl.kul.purchase_service.model.PurchaseOffer;
+import pl.kul.purchase_service.model.PurchaseStatus;
 import pl.kul.purchase_service.model.kafka.SlotOfferedEvent;
 
 import java.sql.Timestamp;
@@ -30,4 +31,11 @@ public class PurchaseOfferTestData {
 
     public static final PurchaseOffer VALID_PURCHASE_OFFER = new PurchaseOffer(VALID_SLOT_OFFERED_EVENT);
     public static final PurchaseOffer EXPIRED_PURCHASE_OFFER = new PurchaseOffer(EXPIRED_SLOT_OFFERED_EVENT);
+
+    public static PurchaseOffer getCompletedOffer() {
+        PurchaseOffer offer = new PurchaseOffer(VALID_SLOT_OFFERED_EVENT);
+        offer.setStatus(PurchaseStatus.COMPLETED);
+
+        return offer;
+    }
 }
