@@ -119,7 +119,7 @@ stay in order relative to each other — see the trade-off note below.
 
 | Method | Path | Description |
 |---|---|---|
-| `POST` | `/events/{eventId}/purchases/{userId}complete` | Complete ticket purchase for a given event |
+| `POST` | `/events/{eventId}/purchases/{userId}/complete` | Complete ticket purchase for a given event |
 
 Returns `404 Not Found` if the offer is not existing, `410 Gone` if the offer has expired.
 
