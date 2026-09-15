@@ -27,7 +27,7 @@ scaled-down version of that system to practice and demonstrate:
 ```
 TicketQueue/
 ├── queue-service/       # queue management, rate limiting, live position, Kafka producer
-├── purchase-service/    # (in progress) consumes slot offers, purchase window, timeouts
+├── purchase-service/    # consumes slot offers, purchase window, timeouts
 ├── docker-compose.yml   # Redis + Kafka (KRaft mode) + services
 └── README.md
 ```
@@ -106,6 +106,22 @@ verification of the join → live position → release flow without a full front
 
 `eventId` is used as the partition key so that all events for a given ticketed event
 stay in order relative to each other — see the trade-off note below.
+
+## `purchase-service`
+
+### Responsibilities
+
+- Consume Kafka SlotOfferedEvents and create PurchaseOffers for each released slot
+- Complete purchase or expire the offer (`POST /events/{eventId}/purchases/{userId}/complete`)
+- Check active offers every 10 minutes to change expired offers status for up-to-date data
+
+### REST API
+
+| Method | Path | Description |
+|---|---|---|
+| `POST` | `/events/{eventId}/purchases/{userId}complete` | Complete ticket purchase for a given event |
+
+Returns `404 Not Found` if the offer is not existing, `410 Gone` if the offer has expired.
 
 ## Testing strategy
 
@@ -198,7 +214,7 @@ Redis: `localhost:6379`. Kafka: `localhost:9092` (host) / `kafka:29092` (inter-c
 - [x] Live position updates over WebSocket
 - [x] Kafka producer for slot-release events
 - [x] Unit, controller, and integration test coverage
-- [ ] `purchase-service`: Kafka consumer, time-boxed purchase window, timeout handling
+- [x] `purchase-service`: Kafka consumer, time-boxed purchase window, timeout handling
 - [ ] `fraud-insight-service`: AI agent observing the event stream for anomaly detection
 - [ ] Kubernetes manifests + CI/CD (GitHub Actions)
 - [ ] Load testing (k6/Gatling) demonstrating virtual threads under high concurrency
