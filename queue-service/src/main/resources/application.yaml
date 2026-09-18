@@ -1,4 +1,7 @@
 spring:
+  threads:
+    virtual:
+      enabled: true
   application:
     name: queue-service
   kafka:
@@ -12,7 +15,7 @@ spring:
       port: 6379
       lettuce:
         pool:
-          max-active: 50
+          max-active: 500
           max-idle: 20
           min-idle: 20
 
