@@ -140,6 +140,31 @@ Three layers, each testing a different thing:
   behavior, release semantics). State is flushed before every test to avoid leakage
   between tests sharing the same container.
 
+### Load testing findings
+
+Load tests (k6, flash-sale scenario simulating a burst of concurrent queue joins)
+were run locally on a development laptop (AMD Ryzen 5 7535HS, 6C/12T, turbo boost
+disabled) — not representative of production-grade infrastructure.
+
+At both 500 and 2000 concurrent virtual users, `queue-service` drove the host CPU to
+100% utilization regardless of configuration (platform threads vs. virtual threads,
+Redis connection pool size 50 vs. 500). Latency scaled with load (p95 ~600ms at 500
+VUs, ~1.25–1.28s at 2000 VUs) but was statistically indistinguishable across all
+tested thread-model and connection-pool configurations at each load level — a strong
+signal that the host CPU, not the application's concurrency model, was the limiting
+factor across the full tested range.
+
+**Conclusion:** on this hardware, the load generator (k6) and the service under test
+compete for the same limited CPU resources, making it impossible to isolate the effect
+of virtual threads from host-level saturation. A meaningful comparison would require
+running the load generator on separate hardware from the service under test (or in a
+cloud environment with more cores available). This is documented as a known limitation
+of testing on developer hardware rather than a flaw in the methodology — the process of
+forming and eliminating hypotheses (thread model → Redis connection pool size → host
+CPU saturation) is the actual, honest outcome of this testing phase, and is arguably
+more representative of real performance engineering work than a clean, one-shot result
+would have been.
+
 ## Architectural decisions & trade-offs
 
 Documenting these because they were deliberate engineering calls, not oversights.
