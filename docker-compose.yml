@@ -1,4 +1,14 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: purchase_service
+      POSTGRES_USER: purchase_user
+      POSTGRES_PASSWORD: purchase_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
   redis:
     image: redis:7-alpine
     ports:
@@ -21,3 +31,6 @@ services:
         KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
         KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
         CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+
+volumes:
+  postgres_data:

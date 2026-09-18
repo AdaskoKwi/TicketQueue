@@ -21,11 +21,11 @@ public class QueueScheduler {
     private final SimpMessagingTemplate messagingTemplate;
     private final KafkaTemplate<String, SlotOfferedEvent> kafkaTemplate;
 
-    private static final int SLOTS_PER_TICK = 1;
+    private static final int SLOTS_PER_TICK = 10;
     private static final String EVENT_ID = "concert-2026";
     private static final String SLOT_OFFERED_TOPIC = "slot-offered";
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 3000)
     public void releaseSlots() {
         queueService.releaseNext(EVENT_ID, SLOTS_PER_TICK)
                 .doOnNext(userId -> {

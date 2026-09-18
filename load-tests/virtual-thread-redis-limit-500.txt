@@ -1,0 +1,47 @@
+adam@pop-os:~/IdeaProjects/TicketQueue/queue-service$ k6 run ../load-tests/flash-sale.js
+
+         /\      Grafana   /‾‾/
+    /\  /  \     |\  __   /  /
+   /  \/    \    | |/ /  /   ‾‾\
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/
+
+
+     execution: local
+        script: ../load-tests/flash-sale.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 2000 max VUs, 50s max duration (incl. graceful stop):
+              * flash_sale: Up to 2000 looping VUs for 20s over 3 stages (gracefulRampDown: 30s, gracefulStop: 30s)
+
+
+
+  █ TOTAL RESULTS
+
+    checks_total.......: 39296   1893.839709/s
+    checks_succeeded...: 100.00% 39296 out of 39296
+    checks_failed......: 0.00%   0 out of 39296
+
+    ✓ status is 200 or 429
+
+    HTTP
+    http_req_duration..............: avg=778.56ms min=4.22ms med=859.65ms max=1.44s p(90)=1.21s p(95)=1.27s
+      { expected_response:true }...: avg=778.56ms min=4.22ms med=859.65ms max=1.44s p(90)=1.21s p(95)=1.27s
+    http_req_failed................: 0.00%  0 out of 39296
+    http_reqs......................: 39296  1893.839709/s
+
+    EXECUTION
+    iteration_duration.............: avg=780.34ms min=4.32ms med=860.89ms max=1.44s p(90)=1.22s p(95)=1.27s
+    iterations.....................: 39296  1893.839709/s
+    vus............................: 52     min=52         max=2000
+    vus_max........................: 2000   min=2000       max=2000
+
+    NETWORK
+    data_received..................: 11 MB  521 kB/s
+    data_sent......................: 6.9 MB 335 kB/s
+
+
+
+
+running (20.7s), 0000/2000 VUs, 39296 complete and 0 interrupted iterations
+flash_sale ✓ [======================================] 0000/2000 VUs  20s
