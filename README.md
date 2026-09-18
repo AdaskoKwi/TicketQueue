@@ -242,4 +242,4 @@ Redis: `localhost:6379`. Kafka: `localhost:9092` (host) / `kafka:29092` (inter-c
 - [x] `purchase-service`: Kafka consumer, time-boxed purchase window, timeout handling
 - [ ] `fraud-insight-service`: AI agent observing the event stream for anomaly detection
 - [ ] Kubernetes manifests + CI/CD (GitHub Actions)
-- [ ] Load testing (k6/Gatling) demonstrating virtual threads under high concurrency
+- [x] Load testing (k6/Gatling) demonstrating virtual threads under high concurrency
