@@ -20,6 +20,8 @@ repositories {
 extra["springAiVersion"] = "2.0.1"
 
 dependencies {
+	implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+	implementation("com.fasterxml.jackson.core:jackson-databind")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-kafka")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
