@@ -11,5 +11,4 @@ public class FraudInsightServiceApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(FraudInsightServiceApplication.class, args);
 	}
-
 }

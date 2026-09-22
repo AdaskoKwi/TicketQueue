@@ -1,4 +1,7 @@
 spring:
+  ai:
+    ollama:
+      base-url: http://localhost:11434
   application:
     name: fraud-insight-service
   datasource:

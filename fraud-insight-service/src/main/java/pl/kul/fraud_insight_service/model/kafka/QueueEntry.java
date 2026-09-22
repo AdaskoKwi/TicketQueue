@@ -26,4 +26,14 @@ public class QueueEntry {
     }
 
     protected QueueEntry() {}
+
+    @Override
+    public String toString() {
+        return "QueueEntry{" +
+                "kafkaEventUUID=" + kafkaEventUUID +
+                ", eventId='" + eventId + '\'' +
+                ", userId='" + userId + '\'' +
+                ", joinedAt=" + joinedAt +
+                '}';
+    }
 }

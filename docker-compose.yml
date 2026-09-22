@@ -1,5 +1,5 @@
 services:
-  purchase-db:
+  purchase_db:
     image: postgres:16-alpine
     ports:
       - "5432:5432"
@@ -10,7 +10,7 @@ services:
     volumes:
       - purchase_postgres_data:/var/lib/postgresql/data
 
-  fraud-db:
+  fraud_db:
     image: postgres:16-alpine
     ports:
       - "5433:5432"
