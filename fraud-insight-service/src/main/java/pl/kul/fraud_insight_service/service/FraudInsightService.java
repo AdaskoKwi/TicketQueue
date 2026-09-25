@@ -70,7 +70,7 @@ public class FraudInsightService {
                       ]
                     }
                 
-                    If there are no anomalies, return:
+                    Only if there are no anomalies, return:
                 
                     {
                       "anomalyDetected": false,
@@ -86,9 +86,9 @@ public class FraudInsightService {
                 new Prompt(
                         contents,
                         OllamaChatOptions.builder()
-                                .model("qwen3:4b")
+                                .model("phi4-mini")
                                 .format("json")
-                                .enableThinking().build()
+                                .disableThinking().build()
                 )
         );
 
