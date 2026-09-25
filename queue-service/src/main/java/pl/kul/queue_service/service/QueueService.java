@@ -3,17 +3,24 @@ package pl.kul.queue_service.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Range;
 import org.springframework.data.redis.core.ReactiveRedisTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import pl.kul.queue_service.model.QueuePosition;
+import pl.kul.queue_service.model.kafka.QueueJoinedEvent;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
+import java.time.Instant;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class QueueService {
     private final ReactiveRedisTemplate<String, String> redisTemplate;
+    private final KafkaTemplate<String, QueueJoinedEvent> kafkaTemplate;
+
+    private static final String QUEUE_JOINED_TOPIC = "queue-joined";
 
     private String queueKey(String eventId) {
         return "queue:" + eventId;
@@ -25,6 +32,18 @@ public class QueueService {
 
     public Mono<Long> joinQueue(String eventId, String userId) {
         double score = System.currentTimeMillis();
+
+        kafkaTemplate.send(
+                QUEUE_JOINED_TOPIC,
+                eventId,
+                new QueueJoinedEvent(
+                        UUID.randomUUID(),
+                        eventId,
+                        userId,
+                        Instant.now()
+                )
+        );
+
         return redisTemplate.opsForZSet()
                 .add(queueKey(eventId), userId, score)
                 .then(getPosition(eventId, userId));
